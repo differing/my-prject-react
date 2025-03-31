@@ -1,0 +1,100 @@
+{
+    "-MSgyQMjBNfYjW2m6r97": {
+        "_id": "-MSgyQMjBNfYjW2m6r97",
+        "name": "4WD",
+        "nameId": "4WD",
+        "description": "Four-wheel drive, also called 4x4 (four by four) or 4WD, refers to a two-axled vehicle drivetrain capable of providing torque to all of its wheels simultaneously.",
+        "image": "https://i.postimg.cc/XYsy7r2w/4x4.png"
+    },
+    "-MSgySbWEFw3rhCfIIns": {
+        "_id": "-MSgySbWEFw3rhCfIIns",
+        "name": "Airbag",
+        "nameId": "airbag",
+        "description": "An Airbag is a vehicle occupant-restraint system using a bag designed to inflate extremely quickly, then quickly deflate during a collision.",
+        "image": "https://i.postimg.cc/28FZMch9/airbag.png"
+    },
+    "-MSgyUeUxLUNUorksrlq": {
+        "_id": "-MSgyUeUxLUNUorksrlq",
+        "name": "Air conditioning",
+        "nameId": "air-conditioning",
+        "description": "Air conditioning, [abbreviated A/C (US) or air con (UK)] is a technique that provide heating, ventilation, and air conditioning (HVAC).",
+        "image": "https://i.postimg.cc/8zp6SRbp/aircon.png"
+    },
+    "-MSgyWOlRpJq2G2hBqYZ": {
+        "_id": "-MSgyWOlRpJq2G2hBqYZ",
+        "name": "Alloy wheels",
+        "nameId": "alloy-wheels",
+        "description": "Alloy wheels, often are purchased for cosmetic purposes.",
+        "image": "https://i.postimg.cc/5tjQHfGD/alloy-wheel.png"
+    },
+    "-MSgyY8fK5DetuiWvbbX": {
+        "_id": "-MSgyY8fK5DetuiWvbbX",
+        "name": "Bluetooth",
+        "nameId": "bluetooth",
+        "description": "Bluetooth car stereo typically allows you to connect your phone, a wireless earpiece or headphones, and other portable electronics.",
+        "image": "https://i.postimg.cc/hGwzTHRv/bluetooth.png"
+    },
+    "-MSgyZoHC-v0eEdoy31Y": {
+        "_id": "-MSgyZoHC-v0eEdoy31Y",
+        "name": "CD",
+        "nameId": "cd",
+        "description": "Compact disc changer is device that allows you to listen CDs on car audio system.",
+        "image": "https://i.postimg.cc/Wzcdfg3P/cd.png"
+    },
+    "-MSgyacRSWOAMXra4lZ_": {
+        "_id": "-MSgyacRSWOAMXra4lZ_",
+        "name": "Cruise control",
+        "nameId": "cruise-control",
+        "description": "Cruise control (also known as speed control, autocruise, or tempomat) is a system that automatically controls the speed of an automobile.",
+        "image": "https://i.postimg.cc/qR3tLjpL/cruise-control.png"
+    },
+    "-MSgycIUgNg2qojbj7e1": {
+        "_id": "-MSgycIUgNg2qojbj7e1",
+        "name": "LED",
+        "nameId": "led",
+        "description": "The advantages of LED lights are many: brighter light, better quality of light, less prone to breakage and less energy consumption.",
+        "image": "https://i.postimg.cc/tCy133w3/led-light.png"
+    },
+    "-MSgydt2l0elQZ2vWXtL": {
+        "_id": "-MSgydt2l0elQZ2vWXtL",
+        "name": "Navigation",
+        "nameId": "navigation",
+        "description": "An electronic system in a vehicle that provides a real-time map of the current location and step-by-step directions to a requested destination.",
+        "image": "https://i.postimg.cc/yYPDvJCw/navigation.png"
+    },
+    "-MSgyg1jo4ZATbbeLtCF": {
+        "_id": "-MSgyg1jo4ZATbbeLtCF",
+        "name": "Seat heating",
+        "nameId": "seat-heating",
+        "description": "Seat heating is a systems that uses heating elements to warm the seats.",
+        "image": "https://i.postimg.cc/MGhHvV1j/seat-heat.png"
+    },
+    "-MSgyhugLG4gmph9qIGB": {
+        "_id": "-MSgyhugLG4gmph9qIGB",
+        "name": "Keyless",
+        "nameId": "keyless",
+        "description": "Keyless system allows you to unlock your car automatically and start and stop it at the push of a button, offering drivers increased convenience, safety, and security.",
+        "image": "https://i.postimg.cc/7h15vhGJ/keyless.png"
+    },
+    "-MSgyl1Umh0tKd3ISkJt": {
+        "_id": "-MSgyl1Umh0tKd3ISkJt",
+        "name": "Parking Assist",
+        "nameId": "parking-assist",
+        "description": "Park Assist is an automated parking aid that helps drivers park with greater precision, using guidance system technology.",
+        "image": "https://i.postimg.cc/RZZN8MMq/parking-assist.png"
+    },
+    "-MSgymXYyAU71cDX6-eK": {
+        "_id": "-MSgymXYyAU71cDX6-eK",
+        "name": "Rain Sensor",
+        "nameId": "rain-sensor",
+        "description": "Rain sensor is a driver-assistance system that detects water on a car's windscreen and activates wipers in the rain.",
+        "image": "https://i.postimg.cc/x1pcVWC5/rain-sensor.png"
+    },
+    "-MSgyo88wO16izQZCVjh": {
+        "_id": "-MSgyo88wO16izQZCVjh",
+        "name": "USB",
+        "nameId": "usb",
+        "description": "A car USB socket is used to power or enable portable devices to work in a car.",
+        "image": "https://i.postimg.cc/jjWCxZnb/usb-drive.png"
+    }
+}
