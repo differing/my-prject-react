@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import styles from "./CatalogPage.module.css";
 
-import { OwnerContext } from "../contexts/OwnerContext";
+//import { OwnerContext } from "../../../OwnerContext-backup";
 
 const CatalogItem = ({
     _id,
@@ -16,7 +16,7 @@ const CatalogItem = ({
     image,
     price,
 }) => {
-    const { onDetailsClick } = useContext(OwnerContext);
+    //const { onDetailsClick } = useContext(OwnerContext);
 
     const detailsClickHandler = () => {
         onDetailsClick(_ownerId);

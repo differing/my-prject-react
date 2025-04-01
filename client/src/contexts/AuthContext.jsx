@@ -1,99 +1,101 @@
-/* eslint-disable react/prop-types */
-import { createContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { initializeApp } from "firebase/app";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+} from "firebase/auth";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
+
+import { firebaseConfig } from "../firebase";
+
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+const auth = getAuth(firebaseApp);
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-    const navigateFunc = useNavigate();
-    const [user, setUser] = useState({});
+  const navigateFunc = useNavigate();
+  const [user, setUser] = useState(null);
 
-    // 🧠 Зареждаме потребител от localStorage при стартиране
-    useEffect(() => {
-        const savedUser = localStorage.getItem('auth');
-        if (savedUser) {
-            setUser(JSON.parse(savedUser));
-        }
-    }, []);
-
-    const onLogin = async (formData) => {
-        const options = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        const storedUser = {
+          email: firebaseUser.email,
+          uid: firebaseUser.uid,
         };
+        setUser(storedUser);
+        localStorage.setItem("auth", JSON.stringify(storedUser));
+      } else {
+        setUser(null);
+        localStorage.removeItem("auth");
+      }
+    });
 
-        const response = await fetch('http://localhost:3030/users/login', options);
-        if (response.status === 403) {
-            throw response;
-        }
+    return () => unsubscribe();
+  }, []);
 
-        const userData = await response.json();
-        localStorage.setItem('auth', JSON.stringify(userData)); // 🆕 Записваме го
-        setUser(userData);
-        navigateFunc('/');
+  const onRegister = async ({ email, password, repass, username, phone, location }) => {
+    if (password !== repass) {
+      throw new Error("Passwords don't match");
+    }
+
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    const newUser = {
+      email: result.user.email,
+      uid: result.user.uid,
     };
 
-    const onRegister = async (formData) => {
-        const options = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-        };
+    // 👇 Добавяне на допълнителни данни
+    await setDoc(doc(db, "users", result.user.uid), {
+      email,
+      username,
+      phone,
+      location,
+      createdAt: new Date(),
+    });
 
-        const { repass, ...regData } = formData;
-        if (repass !== regData.password) {
-            throw new Error("Passwords don't match!");
-        }
+    setUser(newUser);
+    localStorage.setItem("auth", JSON.stringify(newUser));
+    navigateFunc("/");
+  };
 
-        options.body = JSON.stringify(regData);
+  const onLogin = async ({ email, password }) => {
+    const trimmedEmail = email.trim().toLowerCase();
+    const trimmedPassword = password.trim();
 
-        const response = await fetch('http://localhost:3030/users/register', options);
-        if (response.status === 409) {
-            throw response;
-        }
-
-        const userData = await response.json();
-        const { _id, accessToken, email, username } = userData;
-        const cleanUser = { _id, accessToken, email, username };
-
-        localStorage.setItem('auth', JSON.stringify(cleanUser)); // 🆕 Записваме го
-        setUser(cleanUser);
-        navigateFunc('/');
+    const result = await signInWithEmailAndPassword(auth, trimmedEmail, trimmedPassword);
+    const loggedInUser = {
+      email: result.user.email,
+      uid: result.user.uid,
     };
+    setUser(loggedInUser);
+    localStorage.setItem("auth", JSON.stringify(loggedInUser));
+    navigateFunc("/");
+  };
 
-    const onLogout = async () => {
-        const options = {
-            method: 'GET',
-            headers: { 'X-Authorization': user.accessToken },
-        };
+  const onLogout = async () => {
+    await signOut(auth);
+    setUser(null);
+    localStorage.removeItem("auth");
+    navigateFunc("/auth/login");
+  };
 
-        try {
-            await fetch('http://localhost:3030/users/logout', options);
-        } catch (err) {
-            console.warn("Logout request failed:", err.message);
-        }
+  const authContext = {
+    user,
+    hasUser: !!user,
+    onRegister,
+    onLogin,
+    onLogout,
+  };
 
-        localStorage.removeItem('auth'); // 🧼 Изчистваме
-        setUser({});
-        navigateFunc('/auth/login');
-    };
-
-    const authContext = {
-        onLogin,
-        onRegister,
-        onLogout,
-        user,
-        hasUser: !!user.accessToken
-    };
-
-    return (
-        <AuthContext.Provider value={authContext}>
-            {children}
-        </AuthContext.Provider>
-    );
+  return <AuthContext.Provider value={authContext}>{children}</AuthContext.Provider>;
 };
 
-export {
-    AuthContext,
-    AuthProvider
-};
+export { AuthContext, AuthProvider };
+export default AuthProvider;

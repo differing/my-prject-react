@@ -1,9 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-
-import Errors from "./Errors";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase";
 import { AuthContext } from "../contexts/AuthContext";
-
 import styles from "./EditPage.module.css";
 
 const formInitialState = {
@@ -22,44 +21,36 @@ const formInitialState = {
 };
 
 const EditPage = () => {
-    const navigateFunc = useNavigate();
+    const navigate = useNavigate();
     const { user } = useContext(AuthContext);
     const { id } = useParams();
-    // const [car, setCar] = useState([]);
 
     const [formValues, setFormValues] = useState(formInitialState);
     const [showErrorFields, setshowErrorFields] = useState({});
     const [showErrorBox, setShowErrorBox] = useState({});
 
     useEffect(() => {
-        const abortController = new AbortController();
+        const fetchCar = async () => {
+            try {
+                const docRef = doc(db, "cars", id);
+                const docSnap = await getDoc(docRef);
 
-        const options = {
-            method: 'GET',
-            headers: { ['X-Authorization']: user['accessToken'] },
-            body: {}
+                if (docSnap.exists()) {
+                    const carData = docSnap.data();
+                    setFormValues(carData);
+                } else {
+                    navigate("/404");
+                }
+            } catch (err) {
+                console.error("Грешка при зареждане на колата:", err);
+                navigate("/404");
+            }
         };
 
-        fetch(`http://localhost:3030/data/cars/${id}`, { signal: abortController.signal }, options)
-            .then(res => res.json())
-            .then(result => {
-                // result = {};
-                // return console.log(result);
-                setFormValues(result);
-            })
-            .catch(err => {
-                console.log(err.message);
-            });
-
-        return () => abortController.abort();
-    }, [id, user]);
-    // console.log(car);
-    // console.log(showErrorFields);
-    // return console.log(showErrorBox);
+        fetchCar();
+    }, [id, navigate]);
 
     const changeHandler = (e) => {
-        // console.log(e.target.name);
-        // console.log(e.target.value);
         setFormValues(state => ({
             ...state,
             [e.target.name]: e.target.value,
@@ -70,13 +61,13 @@ const EditPage = () => {
     const updateHandler = async (e) => {
         e.preventDefault();
         const trimedFormValues = {};
-        // console.log(formValues);
+
+        // Правим проверка дали стойността е стринг, преди да приложим trim()
         Object.entries(formValues).forEach(([key, value]) => {
-            // console.log(`${key} - ${value}`);
-            trimedFormValues[key] = value;
-            if (key != 'equipmentId' && key != 'mileage' && key != 'year' && key != 'price' && key != 'image' && key != '_updatedOn' && key != '_createdOn' && key != '_ownerId') {
-                // console.log(`${key} - ${value}`);
-                trimedFormValues[key] = value.trim();                
+            if (typeof value === 'string') {
+                trimedFormValues[key] = value.trim();
+            } else {
+                trimedFormValues[key] = value;
             }
         });
 
@@ -86,26 +77,24 @@ const EditPage = () => {
             body: {}
         };
 
-        // return console.log(formValues);
         try {
             entireFormValidator(trimedFormValues);
             const { make, model, mileage, fuel, year, location, image, price, description, equipmentId } = trimedFormValues;
             options.body = JSON.stringify({ make, model, mileage, fuel, year, location, image, price, description, equipmentId });
-            // console.log(options.body);
-            const response = await fetch(`http://localhost:3030/data/cars/${id}`, options);
-            const updatedCar = await response.json();
-            // console.log(updatedCar);
-            navigateFunc(`/details/${updatedCar['_id']}`);
+
+            const carRef = doc(db, "cars", id);
+            await updateDoc(carRef, trimedFormValues);
+
+            navigate(`/details/${id}`);
         } catch (err) {
             console.log(err.message);
         }
     };
 
     function formFieldsValidator(e) {
-        // console.log(e.target.name);
         const currField = e.target.name;
         const currFieldValue = e.target.value;
-        if (currFieldValue == '') {
+        if (currFieldValue === '') {
             setshowErrorFields(state => ({
                 ...state,
                 [currField]: `${currField} is required!`
@@ -119,11 +108,8 @@ const EditPage = () => {
     }
 
     function entireFormValidator(trimedFormValues) {
-        // console.log(e.target.name);
-        // console.log(formValues);
         const errors = {};
         for (const [key, value] of Object.entries(trimedFormValues)) {
-            // console.log(key, value);
             if (value === '') {
                 errors[key] = `${key} is required!`;
             } else {
@@ -145,16 +131,17 @@ const EditPage = () => {
         }
     }
 
+    if (!formValues) return <p style={{ textAlign: "center" }}>Loading...</p>;
+
     return (
-        // <--Edit Page-->
         <section id="create-section">
             <h1 className={styles["item"]}>Edit Ad</h1>
             <main className={`${styles["item"]} ${styles["padded"]} ${styles["align-center"]}`}>
-                <form className={`${styles["layout"]} ${styles["left"]} ${styles["large"]}`} method="post" action="details/:id/edit" onSubmit={updateHandler}>
+                <form className={`${styles["layout"]} ${styles["left"]} ${styles["large"]}`} method="post" onSubmit={updateHandler}>
                     {showErrorBox && Object.values(showErrorBox).some(v => v) && (
                         <div className={styles["error-box"]}>
                             {Object.entries(showErrorBox).map((err) =>
-                                <Errors key={err[0]} errMessage={err[1]} />
+                                <div key={err[0]}>{err[1]}</div>
                             )}
                         </div>
                     )}
@@ -184,3 +171,4 @@ const EditPage = () => {
 };
 
 export default EditPage;
+

@@ -10,8 +10,8 @@
 
 .page-content {
     position: relative;
-    max-width: 980px;
-    margin: auto;
+    max-width: 1024px;
+    margin:  auto;
     min-height: 100vh;
 }
 
@@ -42,4 +42,33 @@
 .page-content>header,
 .page-content>footer {
     background-color: hsl(var(--primary-color), calc(var(--primary-s) - 25%), calc(var(--primary-l) - 5%));
+}
+@media (max-width: 768px) {
+    .page-content > main {
+      margin-top: 160px; /* Регулирай ако header е по-висок */
+      padding-top: 1rem;
+    }
+  
+    .page-content > header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+  
+    .page-content {
+      padding-top: 160px; /* За да се пази място за fixed header */
+    }
+  }
+@media (max-width: 768px) {
+    .page-content > footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+    .page-content {
+        padding-bottom: 64px; /* За да се пази място за fixed footer */
+    }  
 }

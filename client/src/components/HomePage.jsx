@@ -10,7 +10,7 @@ const HomePage = () => {
             <div className={styles["item"]}>
                 <main className={`${styles["layout"]} ${styles["left"]} ${styles["med"]}`}>
                     <div className={styles["col"]}>
-                        <img src="/static/images/logo.jpg" className={styles["img-med"]} />
+                        <img src="/static/images/logo.png" className={styles["img-med"]} />
                     </div>
                     <div className={`${styles["content"]} ${styles["pad-med"]}`}>
                         <p>Welcome to Used Cars Market!</p>

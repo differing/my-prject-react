@@ -1,67 +1,51 @@
 import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
 import { Link } from "react-router-dom";
+import { db } from "../firebase";
 
-import CatalogItem from "./CatalogItem";
-
-import styles from "./CatalogPage.module.css";
+import styles from "./CatalogPage.module.css"; // Ако имаш стилове
 
 const CatalogPage = () => {
     const [cars, setCars] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const abortController = new AbortController();
+        const fetchCars = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(db, "cars"));
+                const carsData = querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
 
-        const requests = [
-            fetch('http://localhost:3030/data/cars', { signal: abortController.signal }),
-            fetch('http://localhost:3030/data/bought', { signal: abortController.signal })
-        ];
+                // ❗️Показваме само коли, които НЕ са продадени
+                const availableCars = carsData.filter(car => !car.isSold);
+                setCars(availableCars);
+                setLoading(false);
+            } catch (err) {
+                console.error("Грешка при зареждане на коли:", err);
+            }
+        };
 
-        Promise.all(requests)
-            .then(async ([cars, purchased]) => {
-                const c = await cars.json();
-                const p = await purchased.json();
-                return [c, p];
-            })
-            .then(result => {
-                // result = [];
-                const [cars, purchased] = result;
-                // console.log(cars);
-                let purchasedIds = [];
-                // console.log(purchased);
-                if (purchased.length != 0) {
-                    purchasedIds = purchased.map(car => car['productId']);                    
-                }
-                const notPurchased = cars.filter(car => !purchasedIds.includes(car['_id']));
-                // return console.log(notPurchased);
-                setCars(notPurchased);
-            })
-            .catch(err => {
-                console.log(err.message);
-            });
-
-        return () => abortController.abort();
+        fetchCars();
     }, []);
 
+    if (loading) return <p style={{ textAlign: "center" }}>Loading cars...</p>;
+
     return (
-        // <--Catalog Page-->
-        <section id="catalog-section" className={styles["spaced"]}>
-            <h1 className={styles["item"]}>Auto Occasion</h1>
-            <ul className={`${styles["catalog"]} ${styles["cards"]}`}>
-                {/* {console.log(cars)} */}
-                {cars.map((car) =>
-                    <CatalogItem key={car['_id']}{...car} />
-                )}
-            </ul>
-            {cars.length == 0 &&
-                <>
-                    <main className={`${styles["item"]} ${styles["pad-large"]} ${styles["align-center"]}`}>
-                        <p><strong>Nothing has been published yet. Be the first!</strong></p>
-                        <div>
-                            <Link className={styles["action"]} to="/create">Publish Ad</Link>
-                        </div>
-                    </main>
-                </>
-            }
+        <section id="catalog-section">
+            <h1 style={{ textAlign: "center" }}>All Available Cars</h1>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", justifyContent: "center" }}>
+                {cars.map(car => (
+                    <div key={car.id} style={{ border: "1px solid #ccc", padding: "1rem", width: "250px", borderRadius: "10px", boxShadow: "0 2px 5px rgba(0,0,0,0.1)" }}>
+                        <img src={car.image} alt={car.model} style={{ width: "100%", height: "150px", objectFit: "cover", borderRadius: "6px" }} />
+                        <h3>{car.make} {car.model}</h3>
+                        <p>Year: {car.year}</p>
+                        <p>Price: ${car.price}</p>
+                        <Link to={`/details/${car.id}`} style={{ textDecoration: "none", color: "#fff", background: "#2d7a91", padding: "0.4rem 0.8rem", borderRadius: "5px", display: "inline-block", marginTop: "0.5rem" }}>View Details</Link>
+                    </div>
+                ))}
+            </div>
         </section>
     );
 };

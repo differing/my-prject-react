@@ -1,144 +1,161 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-
-import Errors from "./Errors";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../firebase";
 import { AuthContext } from "../contexts/AuthContext";
-
+import Errors from "./Errors";
 import styles from "./CreatePage.module.css";
 
 const formInitialState = {
-    make: '',
-    model: '',
-    mileage: '',
-    fuel: '',
-    year: '',
-    location: '',
-    image: '',
-    price: '',
-    horsePower: '',
-    engineSize: '',
-    description: '',
-    equipmentId: []
+  make: "",
+  model: "",
+  mileage: "",
+  fuel: "",
+  horsePower: "",
+  engineSize: "",
+  year: "",
+  location: "",
+  image: "",
+  price: "",
+  description: "",
+  equipmentId: [],
 };
 
 const CreatePage = () => {
-    const navigateFunc = useNavigate();
-    const { user } = useContext(AuthContext);
+  const navigateFunc = useNavigate();
+  const { user } = useContext(AuthContext);
 
-    const [formValues, setFormValues] = useState(formInitialState);
-    const [showErrorFields, setshowErrorFields] = useState(formInitialState);
-    const [showErrorBox, setShowErrorBox] = useState(Object.fromEntries(Object.entries(formInitialState).slice(0, 9)));
+  const [formValues, setFormValues] = useState(formInitialState);
+  const [showErrorFields, setshowErrorFields] = useState(formInitialState);
+  const [showErrorBox, setShowErrorBox] = useState(
+    Object.fromEntries(Object.entries(formInitialState).slice(0, 9))
+  );
 
-    const changeHandler = (e) => {
-        setFormValues(state => ({
-            ...state,
-            [e.target.name]: e.target.value,
-        }));
-        formFieldsValidator(e);
-    };
+  const changeHandler = (e) => {
+    setFormValues((state) => ({
+      ...state,
+      [e.target.name]: e.target.value,
+    }));
+    formFieldsValidator(e);
+  };
 
-    const resetFormHandler = () => {
-        setFormValues(formInitialState);
-    };
+  const resetFormHandler = () => {
+    setFormValues(formInitialState);
+  };
 
-    const publishHandler = async (e) => {
-        e.preventDefault();
+  const publishHandler = async (e) => {
+    e.preventDefault();
 
-        const trimedFormValues = {};
-        Object.entries(formValues).forEach(([key, value]) => {
-            trimedFormValues[key] = key !== 'equipmentId' ? value.trim() : value;
-        });
+    try {
+      const trimmed = {};
+      Object.entries(formValues).forEach(([key, value]) => {
+        trimmed[key] = key !== "equipmentId" ? value.trim() : value;
+      });
 
-        const options = {
-            method: 'POST',
-            headers: {
-                'X-Authorization': user['accessToken'],
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(trimedFormValues)
-        };
+      entireFormValidator(trimmed);
 
-        try {
-            entireFormValidator(trimedFormValues);
+      const carData = {
+        ...trimmed,
+        mileage: Number(trimmed.mileage),
+        horsePower: Number(trimmed.horsePower),
+        engineSize: Number(trimmed.engineSize),
+        year: Number(trimmed.year),
+        price: Number(trimmed.price),
+        ownerId: user?.uid || "anonymous",
+        ownerEmail: user?.email || "unknown",
+        createdAt: serverTimestamp(),
+      };
 
-            const response = await fetch('http://localhost:3030/data/cars', options);
+      const docRef = await addDoc(collection(db, "cars"), carData);
 
-            if (!response.ok) {
-                throw new Error(`Server error: ${response.statusText}`);
-            }
+      resetFormHandler();
+      navigateFunc(`/details/${docRef.id}`);
+    } catch (err) {
+      console.error("❌ Error creating car:", err.message);
+    }
+  };
 
-            const newCar = await response.json();
+  function formFieldsValidator(e) {
+    const field = e.target.name;
+    const value = e.target.value;
 
-            if (!newCar._id) {
-                console.error('⚠️ Сървърът не върна _id:', newCar);
-                return navigateFunc('/404');
-            }
+    setshowErrorFields((state) => ({
+      ...state,
+      [field]: value === "" ? `${field} is required!` : "",
+    }));
+  }
 
-            resetFormHandler();
-            navigateFunc(`/details/${newCar._id}`);
-        } catch (err) {
-            console.error(err.message);
-        }
-    };
-
-    function formFieldsValidator(e) {
-        const currField = e.target.name;
-        const currFieldValue = e.target.value;
-
-        setshowErrorFields(state => ({
-            ...state,
-            [currField]: currFieldValue === '' ? `${currField} is required!` : ''
-        }));
+  function entireFormValidator(values) {
+    const errors = {};
+    for (const [key, value] of Object.entries(values)) {
+      errors[key] = value === "" ? `${key} is required!` : "";
     }
 
-    function entireFormValidator(trimedFormValues) {
-        const errors = {};
-        for (const [key, value] of Object.entries(trimedFormValues)) {
-            errors[key] = value === '' ? `${key} is required!` : '';
-        }
+    setshowErrorFields((state) => ({ ...state, ...errors }));
+    setShowErrorBox((state) => ({ ...state, ...errors }));
 
-        setshowErrorFields(state => ({ ...state, ...errors }));
-        setShowErrorBox(state => ({ ...state, ...errors }));
-
-        if (Object.values(errors).some(v => v)) {
-            throw Error('All fields are required!');
-        }
+    if (Object.values(errors).some((v) => v)) {
+      throw Error("All fields are required!");
     }
+  }
 
-    return (
-        <section id="create-section">
-            <h1 className={styles["item"]}>Publish Ad</h1>
-            <main className={`${styles["item"]} ${styles["padded"]} ${styles["align-center"]}`}>
-                <form className={`${styles["layout"]} ${styles["left"]} ${styles["large"]}`} method="post" onSubmit={publishHandler}>
-                    {showErrorBox && Object.values(showErrorBox).some(v => v) && (
-                        <div className={styles["error-box"]}>
-                            {Object.entries(showErrorBox).map(([key, msg]) =>
-                                <Errors key={key} errMessage={msg} />
-                            )}
-                        </div>
-                    )}
-                    <div className={`${styles["col"]} ${styles["aligned"]}`}>
-                        <label><span>Make</span><input type="text" name="make" value={formValues.make} className={showErrorFields['make'] && styles["field-error"]} onChange={changeHandler} /></label>
-                        <label><span>Model</span><input type="text" name="model" value={formValues.model} className={showErrorFields['model'] && styles["field-error"]} onChange={changeHandler} /></label>
-                        <label><span>Mileage</span><input type="number" name="mileage" value={formValues.mileage} className={showErrorFields['mileage'] && styles["field-error"]} onChange={changeHandler} /></label>
-                        <label><span>Fuel</span><input type="text" name="fuel" value={formValues.fuel} className={showErrorFields['fuel'] && styles["field-error"]} onChange={changeHandler} /></label>
-                        <label><span>Horse Power</span><input type="number" name="horsePower" value={formValues.horsePower} onChange={changeHandler} /></label>
-                        <label><span>Engine Size (cc)</span><input type="number" name="engineSize" value={formValues.engineSize} onChange={changeHandler} /></label>
-                        <label><span>Year</span><input type="number" name="year" value={formValues.year} className={showErrorFields['year'] && styles["field-error"]} onChange={changeHandler} /></label>
-                        <label><span>Location</span><input type="text" name="location" value={formValues.location} className={showErrorFields['location'] && styles["field-error"]} onChange={changeHandler} /></label>
-                        <label><span>Image</span><input type="text" name="image" value={formValues.image} className={showErrorFields['image'] && styles["field-error"]} onChange={changeHandler} /></label>
-                        <label><span>Price</span><input type="number" step="any" name="price" value={formValues.price} className={showErrorFields['price'] && styles["field-error"]} onChange={changeHandler} /></label>
-                    </div>
-                    <div className={`${styles["content"]} ${styles["pad-med"]} ${styles["align-center"]} ${styles["vertical"]}`}>
-                        <label><span>Description</span><textarea name="description" value={formValues.description} className={showErrorFields['description'] && styles["field-error"]} onChange={changeHandler}></textarea></label>
-                        <div className={styles["align-center"]}>
-                            <input className={styles["action"]} type="submit" value="Publish Item" />
-                        </div>
-                    </div>
-                </form>
-            </main>
-        </section>
-    );
+  return (
+    <section>
+      <form onSubmit={publishHandler} className={styles["form-container"]}>
+        <h1>Publish Ad</h1>
+
+        {showErrorBox && Object.values(showErrorBox).some((v) => v) && (
+          <div className={styles["error-box"]}>
+            {Object.entries(showErrorBox).map(
+              ([key, msg]) => msg && <Errors key={key} errMessage={msg} />
+            )}
+          </div>
+        )}
+
+        {[
+          ["Make", "make"],
+          ["Model", "model"],
+          ["Mileage", "mileage", "number"],
+          ["Fuel", "fuel"],
+          ["Horse Power", "horsePower", "number"],
+          ["Engine Size (cc)", "engineSize", "number"],
+          ["Year", "year", "number"],
+          ["Location", "location"],
+          ["Image", "image"],
+          ["Price", "price", "number"],
+        ].map(([label, name, type = "text"]) => (
+          <div className={styles["form-group"]} key={name}>
+            <label>{label}</label>
+            <input
+              type={type}
+              name={name}
+              value={formValues[name]}
+              onChange={changeHandler}
+              className={
+                showErrorFields[name] ? styles["field-error"] : undefined
+              }
+            />
+          </div>
+        ))}
+
+        <div className={styles["form-group"]}>
+          <label>Description</label>
+          <textarea
+            name="description"
+            value={formValues.description}
+            onChange={changeHandler}
+            className={
+              showErrorFields["description"] ? styles["field-error"] : undefined
+            }
+          ></textarea>
+        </div>
+
+        <button type="submit" className={styles["button-submit"]}>
+          Publish Item
+        </button>
+      </form>
+    </section>
+  );
 };
 
 export default CreatePage;

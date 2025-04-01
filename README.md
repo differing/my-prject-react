@@ -1,38 +1,95 @@
-# Auto Occasion Application
+# ![Logo](./public/static/logo.jpg)
 
-## Overview
+# 🚗 Auto Occasion Application
 
-Welcome to the Auto Occasion Application! This is a Single Page Application (SPA) developed with React.js, designed for viewing and managing car listings.
+This is a Single Page Application (SPA) for publishing and browsing used cars. Built with **React**, **Firebase** and **Vite**.
 
--	**Install Client Dependencies:**
-	-	Navigate to the root directory of the project and install the dependencies for the client.
-		-	Navigate to the root directory and run:
-		```bash
-		cd client
-		```
-		-	In the 'client' directory, install client dependencies by running:
-		```bash
-		npm install
-		```
--	**Start the Server:**
-	-	Navigate to the server directory of the project and start the Node.js server.
-		-	Navigate to the root directory and run:
-		```bash
-		cd server
-		```
-		-	In the 'server' directory run:
-		```bash
-		node server.js
-		```
-	This will start the RESTful API Service, and you should see output 'Server started on port 3030. You can make requests to http://localhost:3030/' indicating that the service API is running. It should be accessible at http://localhost:3030.
--	**Start the Client Development Server:**
-	-	Open a new terminal window and navigate to the client directory. Start the Vite development server:
-		-	In the 'client' directory
-		```bash
-		npm run dev
-		```
-	This will start the development server, and you should see output indicating that the development server is running. It should be accessible at http://localhost:5173.
+---
 
-## License
+## 🛠️ Features
 
-This project is licensed under the MIT License 
+- 🔐 User registration & login (Firebase Authentication)
+- 📄 Publish car listings
+- 📷 Upload image URLs
+- ❤️ Like and save favorite cars
+- ✔️ Buy cars and track purchases
+- 👤 Profile page with published, liked, and purchased cars
+- 🔎 Search with filters
+- 💬 Edit profile details
+- 🔧 Admin tools (edit / delete own listings)
+
+---
+
+## 📦 Installation Instructions
+
+> ⚠️ Firebase configuration is already included in the code — no `.env` needed!
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/differing/my-prject-react
+cd auto-occasion/client
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Start the Development Server
+
+```bash
+npm run dev
+```
+
+Then open [http://localhost:5173](http://localhost:5173) in your browser.
+
+---
+
+## 🔧 Technologies Used
+
+- **React**
+- **Vite**
+- **Firebase Firestore**
+- **Firebase Authentication**
+- **React Router**
+- **CSS Modules**
+- **Responsive Design (Mobile Ready)**
+
+---
+
+## 📁 Project Structure
+
+```
+client/
+│
+├── src/
+│   ├── components/
+│   ├── contexts/
+│   ├── pages/
+│   ├── firebase.js
+│   ├── App.jsx
+│   └── main.jsx
+│
+├── public/
+│   └── images/
+│
+├── .gitignore
+├── index.html
+├── package.json
+└── vite.config.js
+```
+
+---
+
+## ⚠️ Notes
+
+- Make sure you're connected to the internet to allow Firebase to function properly.
+- All Firebase credentials are pre-included in `firebase.js`, no environment config needed.
+
+---
+
+## 📜 License
+
+This project is licensed under the [MIT License](LICENSE).
