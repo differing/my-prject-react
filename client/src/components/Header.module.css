@@ -1,129 +1,168 @@
+/* === Header Container === */
 header {
-    background-color: hsl(var(--secondary-color), var(--secondary-s), var(--secondary-l));
-    padding: 0.8rem 1.5rem;
-    display: flex;
+  background-color: hsl(var(--secondary-color), var(--secondary-s), var(--secondary-l));
+  padding: 0.8rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  position: relative;
+}
+
+/* === Title & Logo === */
+.title-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+.title-logo img {
+  height: 48px;
+  margin-right: 10px;
+}
+
+.title-logo span {
+  font-size: 1.5rem;
+  color: white;
+}
+
+/* === Welcome Text === */
+.welcome-text {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-weight: bold;
+  margin-left: auto;
+  margin-right: 1rem;
+}
+
+/* === Navigation === */
+.main-nav {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.main-nav ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+}
+
+.main-nav li {
+  display: block;
+}
+
+.main-nav a {
+  text-decoration: none;
+  padding: 10px 20px;
+  background-color: hsl(var(--secondary-color), var(--secondary-s), calc(var(--secondary-l) - 20%));
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.main-nav a:hover {
+  background-color: hsl(var(--secondary-color), var(--secondary-s), var(--secondary-l));
+}
+
+/* === User Info Badge === */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #b8da59;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 25px;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  margin-left: 1rem;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-    z-index: 10;
+    padding: 1rem;
   }
-  
-  /* Title and Logo */
+
   .title-logo {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
-  }
-  
-  .title-logo img {
-    height: 48px;
-    margin-right: 10px;
-  }
-  
-  .title-logo span {
-    font-size: 1.5rem;
-    color: white;
-  }
-  
-  /* Welcome text */
-  .welcome-text {
-    background-color: #d4edda;
-    color: #155724;
-    padding: 6px 12px;
-    border-radius: 10px;
-    font-weight: bold;
-    margin-left: auto;
-    margin-right: 1rem;
-  }
-  
-  /* Navigation */
-  .main-nav {
-    width: 100%;
-    margin-top: 1rem;
-  }
-  
-  .main-nav ul {
-    list-style: none;
-    display: flex;
     justify-content: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    padding: 0;
-    margin: 0;
+    margin-bottom: 0.5rem;
   }
-  
-  .main-nav li {
-    display: block;
+
+  .welcome-text {
+    margin: 0.5rem auto;
+    width: 90%;
+    font-size: 1rem;
+    text-align: center;
   }
-  
-  .main-nav a {
-    text-decoration: none;
-    padding: 10px 20px;
-    background-color: hsl(var(--secondary-color), var(--secondary-s), calc(var(--secondary-l) - 20%));
-    border-radius: 10px;
-    color: white;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+
+  .main-nav {
+    margin-top: 0.5rem;
+    width: 100%;
   }
-  
-  .main-nav a:hover {
-    background-color: hsl(var(--secondary-color), var(--secondary-s), var(--secondary-l));
-  }
-  
-  /* User info */
-  .user-info {
-    display: flex;
+
+  .main-nav ul {
+    flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
-    background-color: #b8da59;
-    color: white;
-    padding: 0.4rem 0.8rem;
-    border-radius: 25px;
-    font-weight: bold;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   }
-  
-  .avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid white;
+
+  .main-nav a {
+    width: 90%;
+    max-width: 300px;
+    font-size: 1rem;
+    text-align: center;
   }
-  
-  /* Responsive design */
-  @media (max-width: 450px) {
-    header {
-      flex-direction: column;
-      align-items: center;
-      padding: 1rem;
-      text-align: center;
-    }
-  
-    .title-logo {
-      justify-content: center;
-      margin-bottom: 0.5rem;
-    }
-  
-    .main-nav ul {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-  
-    .main-nav a {
-      width: 100%;
-      max-width: 300px;
-      margin: 0 auto;
-      font-size: 1rem;
-    }
-  
-    .welcome-text {
-      margin: 0.5rem auto;
-      width: 90%;
-      font-size: 1rem;
-    }
+
+  .user-info {
+    margin: 0.5rem auto;
+    justify-content: center;
   }
-  
+}
+@media (max-width: 400px) {
+  .main-nav a {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+
+  .welcome-text {
+    font-size: 0.95rem;
+    padding: 6px 10px;
+  }
+
+  .title-logo span {
+    font-size: 1.2rem;
+  }
+
+  .title-logo img {
+    height: 40px;
+    margin-right: 6px;
+  }
+
+  .user-info {
+    flex-direction: column;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 0.4rem 0.6rem;
+  }
+}

@@ -23,7 +23,7 @@ const DetailsPage = () => {
   const [car, setCar] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
   const [liked, setLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(0); // 👈 NEW
+  const [likesCount, setLikesCount] = useState(0); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,12 +40,12 @@ const DetailsPage = () => {
           setIsOwner(true);
         }
 
-        // 💡 Брои харесванията
+        //  Брои харесванията
         const likesQ = query(collection(db, "likes"), where("carId", "==", id));
         const allLikes = await getDocs(likesQ);
         setLikesCount(allLikes.size);
 
-        // 🔎 Проверка дали user вече е харесал
+        //  Проверка дали user вече е харесал
         if (hasUser && carData.ownerId !== user.uid) {
           const userLikeQ = query(
             collection(db, "likes"),
@@ -102,12 +102,12 @@ const DetailsPage = () => {
       const likeSnap = await getDocs(q);
 
       if (!likeSnap.empty) {
-        // 👎 Remove like
+        // Remove like
         await deleteDoc(likeSnap.docs[0].ref);
         setLiked(false);
         setLikesCount((prev) => prev - 1);
       } else {
-        // 👍 Add like
+        // Add like
         await addDoc(likeRef, {
           carId: id,
           userId: user.uid,

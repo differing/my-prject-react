@@ -3,7 +3,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { db } from "../firebase";
 
-import styles from "./CatalogPage.module.css"; // Ако имаш стилове
+import styles from "./CatalogPage.module.css";
 
 const CatalogPage = () => {
     const [cars, setCars] = useState([]);

@@ -18,7 +18,10 @@
 .page-content>main {
     padding-bottom: 48px;
 }
-
+main,
+section {
+  margin-top: 80px; /* ако header-ът е с фиксирана височина */
+}
 .page-content,
 .page-content>main {
     background-color: hsl(var(--primary-color), calc(var(--primary-s) - 35%), calc(var(--primary-l) + 35%));
